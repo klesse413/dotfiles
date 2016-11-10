@@ -2,8 +2,6 @@ set nocompatible
 set laststatus=2
 call plug#begin('~/.vim/plugged')
 
-" Make sure you use single quotes
-
 Plug 'scrooloose/nerdtree'
 
 Plug 'editorconfig/editorconfig-vim'
@@ -24,6 +22,8 @@ Plug 'terryma/vim-multiple-cursors'
 
 Plug 'JazzCore/ctrlp-cmatcher'
 
+call plug#end()
+
 " Tabs are 2 characters
 set tabstop=2
 
@@ -33,14 +33,11 @@ set number
 " " (Auto)indent uses 2 characters
 set shiftwidth=2
 
-" " spaces instead of tabs
+" spaces instead of tabs
 set expandtab
 
-" " guess indentation
+" guess indentation
 set autoindent
-
-" Add plugins to &runtimepath
-call plug#end()
 
 " highlight extra whitespace
 highlight ExtraWhitespace ctermbg=red
@@ -70,6 +67,7 @@ highlight CursorLineNr ctermfg=Gray ctermbg=237
 highlight SignColumn ctermbg=none
 highlight Search ctermfg=237
 set lazyredraw " hack to let curosrline bg not redraw every scroll
+
 map <C-n> :NERDTreeToggle<CR>
 let g:NERDTreeShowHidden=1
 
