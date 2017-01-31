@@ -72,7 +72,11 @@ map <C-n> :NERDTreeToggle<CR>
 let g:NERDTreeShowHidden=1
 
 " strip whitespace on save
-autocmd BufWritePre * :%s/\s\+$//e
+let blacklist = ['md']
+autocmd BufWritePre * if index(blacklist, &ft) < 0 | :%s/\s\+$//e
 
 " change multicursor mapping so C-n can be nerdtree
 let g:multi_cursor_next_key='<C-m>'
+
+" overcome limit imposed by max height
+let g:ctrlp_match_window = 'results:50'
