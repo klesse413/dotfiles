@@ -16,11 +16,11 @@ Plug 'airblade/vim-gitgutter'
 
 Plug 'tpope/vim-fugitive'
 
-Plug 'rking/ag.vim'
-
 Plug 'terryma/vim-multiple-cursors'
 
 Plug 'JazzCore/ctrlp-cmatcher'
+
+Plug 'mileszs/ack.vim'
 
 call plug#end()
 
@@ -80,3 +80,14 @@ let g:multi_cursor_next_key='<C-m>'
 
 " overcome limit imposed by max height
 let g:ctrlp_match_window = 'results:50'
+
+let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
+let g:ctrlp_max_files = 50000
+
+if executable('rg')
+  set grepprg=rg\ --color=never
+  let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
+  let g:ctrlp_use_caching = 0
+endif
+
+let g:ackprg = 'rg --vimgrep --no-heading'
