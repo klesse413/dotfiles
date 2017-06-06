@@ -84,6 +84,8 @@ let g:ctrlp_match_window = 'results:50'
 let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
 let g:ctrlp_max_files = 50000
 
+let g:ctrlp_show_hidden = 1
+
 if executable('rg')
   set grepprg=rg\ --color=never
   let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
