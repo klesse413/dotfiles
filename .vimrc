@@ -6,7 +6,7 @@ Plug 'scrooloose/nerdtree'
 
 Plug 'editorconfig/editorconfig-vim'
 
-Plug 'ctrlpvim/ctrlp.vim'
+Plug '/usr/local/opt/fzf'
 
 Plug 'vim-airline/vim-airline'
 
@@ -17,8 +17,6 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 
 Plug 'terryma/vim-multiple-cursors'
-
-Plug 'JazzCore/ctrlp-cmatcher'
 
 Plug 'mileszs/ack.vim'
 
@@ -78,16 +76,34 @@ autocmd BufWritePre * if index(blacklist, &ft) < 0 | :%s/\s\+$//e
 " change multicursor mapping so C-n can be nerdtree
 let g:multi_cursor_next_key='<C-m>'
 
-" overcome limit imposed by max height
-let g:ctrlp_match_window = 'results:50'
-
-let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
-let g:ctrlp_max_files = 50000
-
+" Use ripgrep https://github.com/BurntSushi/ripgrep
 if executable('rg')
-  set grepprg=rg\ --color=never
-  let g:ctrlp_user_command = 'rg %s --files --color=never --glob --hidden""'
-  let g:ctrlp_use_caching = 0
+  " Use rg over Grep
+  set grepprg=rg\ -L\ --no-heading\ --vimgrep
+  " Use rg over ack
+  let g:ackprg = 'rg -L --vimgrep --smart-case'
 endif
 
-let g:ackprg = 'rg --vimgrep --no-heading'
+" fzf
+" use less of the screen by default
+let g:fzf_layout = { 'down': '~25%' }
+" open fzf with ctrl+p
+nmap <C-p> :FZF<CR>
+" ctrl-p / ctrl-n cycle fzf history
+let g:fzf_history_dir = '~/.local/share/fzf-history'
+
+" --column: Show column number
+" --line-number: Show line number
+" --no-heading: Do not show file headings in results
+" --fixed-strings: Search term as a literal string
+" --ignore-case: Case insensitive search
+" --no-ignore: Do not respect .gitignore, etc...
+" --hidden: Search hidden files and folders
+" --follow: Follow symlinks
+" --glob: Additional conditions for search (in this case ignore everything in .git/ and node_modules/)
+" --color: Search color options
+let g:rg_command = '
+  \ rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --color "always"
+  \ --glob "!{.git,node_modules}/*" '
+
+command! -bang -nargs=* F call fzf#vim#grep(g:rg_command .shellescape(<q-args>), 1, <bang>0)
