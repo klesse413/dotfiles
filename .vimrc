@@ -6,7 +6,9 @@ Plug 'scrooloose/nerdtree'
 
 Plug 'editorconfig/editorconfig-vim'
 
-Plug '/usr/local/opt/fzf'
+" Plug '/usr/local/opt/fzf'
+
+Plug 'kien/ctrlp.vim'
 
 Plug 'vim-airline/vim-airline'
 
@@ -86,11 +88,14 @@ endif
 
 " fzf
 " use less of the screen by default
-let g:fzf_layout = { 'down': '~25%' }
+" let g:fzf_layout = { 'down': '~25%' }
 " open fzf with ctrl+p
-nmap <C-p> :FZF<CR>
+" nmap <C-p> :FZF<CR>
 " ctrl-p / ctrl-n cycle fzf history
-let g:fzf_history_dir = '~/.local/share/fzf-history'
+" let g:fzf_history_dir = '~/.local/share/fzf-history'
+
+set wildignore+=*/node_modules/*
+set wildignore+=*/vendor/ruby/*,*/vendor/assets/*
 
 " --column: Show column number
 " --line-number: Show line number
@@ -102,8 +107,13 @@ let g:fzf_history_dir = '~/.local/share/fzf-history'
 " --follow: Follow symlinks
 " --glob: Additional conditions for search (in this case ignore everything in .git/ and node_modules/)
 " --color: Search color options
-let g:rg_command = '
-  \ rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --color "always"
-  \ --glob "!{.git,node_modules}/*" '
+" let g:rg_command = 'rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --color "always" --glob "!{.git,node_modules,*/vendor}/*" '
 
-command! -bang -nargs=* F call fzf#vim#grep(g:rg_command .shellescape(<q-args>), 1, <bang>0)
+" command! -bang -nargs=* F call fzf#vim#grep(g:rg_command .shellescape(<q-args>), 1, <bang>0)
+
+" just use ctrlp - fzf wont let me ignore stuff properly
+if executable('rg')
+  set grepprg=rg\ --color=never
+  let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
+  let g:ctrlp_use_caching = 0
+endif
