@@ -22,6 +22,10 @@ Plug 'terryma/vim-multiple-cursors'
 
 Plug 'mileszs/ack.vim'
 
+Plug 'leafgarland/typescript-vim'
+
+Plug 'peitalin/vim-jsx-typescript'
+
 call plug#end()
 
 " Tabs are 2 characters
