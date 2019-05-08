@@ -1,4 +1,3 @@
-set nocompatible
 set laststatus=2
 call plug#begin('~/.vim/plugged')
 
@@ -6,9 +5,9 @@ Plug 'scrooloose/nerdtree'
 
 Plug 'editorconfig/editorconfig-vim'
 
-" Plug '/usr/local/opt/fzf'
+Plug '/usr/local/opt/fzf'
 
-Plug 'kien/ctrlp.vim'
+" Plug 'kien/ctrlp.vim'
 
 Plug 'vim-airline/vim-airline'
 
@@ -25,6 +24,10 @@ Plug 'mileszs/ack.vim'
 Plug 'leafgarland/typescript-vim'
 
 Plug 'peitalin/vim-jsx-typescript'
+
+Plug 'prettier/vim-prettier', {
+  \ 'do': 'yarn install',
+  \ 'for': ['javascript', 'typescript'] }
 
 call plug#end()
 
@@ -82,6 +85,10 @@ autocmd BufWritePre * if index(blacklist, &ft) < 0 | :%s/\s\+$//e
 " change multicursor mapping so C-n can be nerdtree
 let g:multi_cursor_next_key='<C-m>'
 
+" async run prettier on save
+let g:prettier#autoformat = 0
+autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx PrettierAsync
+
 " Use ripgrep https://github.com/BurntSushi/ripgrep
 if executable('rg')
   " Use rg over Grep
@@ -90,34 +97,32 @@ if executable('rg')
   let g:ackprg = 'rg -L --vimgrep --smart-case'
 endif
 
-" fzf
+" bunch of madness below switching back and forth between ctrlp and fzf
+" because fzf is way better but was having trouble ignoring stuff properly
+" in a good state now with the below plus a line in my bashrc:
+" export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git/*"'
+
 " use less of the screen by default
-" let g:fzf_layout = { 'down': '~25%' }
+let g:fzf_layout = { 'down': '~25%' }
 " open fzf with ctrl+p
-" nmap <C-p> :FZF<CR>
+nmap <C-p> :FZF<CR>
 " ctrl-p / ctrl-n cycle fzf history
 " let g:fzf_history_dir = '~/.local/share/fzf-history'
 
 set wildignore+=*/node_modules/*
 set wildignore+=*/vendor/ruby/*,*/vendor/assets/*
 
-" --column: Show column number
-" --line-number: Show line number
-" --no-heading: Do not show file headings in results
-" --fixed-strings: Search term as a literal string
-" --ignore-case: Case insensitive search
-" --no-ignore: Do not respect .gitignore, etc...
-" --hidden: Search hidden files and folders
-" --follow: Follow symlinks
-" --glob: Additional conditions for search (in this case ignore everything in .git/ and node_modules/)
-" --color: Search color options
-" let g:rg_command = 'rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --color "always" --glob "!{.git,node_modules,*/vendor}/*" '
+" command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
+" replace the above command with smudge's:
+command! -bang -nargs=* F call fzf#vim#grep(g:rg_command .shellescape(<q-args>), 1, <bang>0)
 
-" command! -bang -nargs=* F call fzf#vim#grep(g:rg_command .shellescape(<q-args>), 1, <bang>0)
-
-" just use ctrlp - fzf wont let me ignore stuff properly
 if executable('rg')
-  set grepprg=rg\ --color=never
-  let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
-  let g:ctrlp_use_caching = 0
+  set grepprg=rg\ --color=never\ --vimgrep
+  " let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
+  " let g:ctrlp_use_caching = 0
+  let g:rg_command = '
+    \ rg --column --line-number --no-heading --fixed-strings --smart-case --hidden --follow --color "always"
+    \ -g "*.{sql,R,rs,java,jbuilder,js,jsx,json,php,ctp,css,scss,md,styl,jade,html,config,py,cpp,c,go,hs,rb,erb,conf,ts,tsx}"
+    \ -g "!{.git,node_modules,vendor}/*" '
 endif
+
